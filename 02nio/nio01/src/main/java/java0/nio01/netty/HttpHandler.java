@@ -46,7 +46,7 @@ public class HttpHandler extends ChannelInboundHandlerAdapter {
         FullHttpResponse response = null;
         try {
             // 使用MyHttpClient请求HttpServer01的数据
-            String value = MyHttpClient.getContent();
+            String value = "MyHttpClient.getContent()";
 
             response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(value.getBytes("UTF-8")));
             response.headers().set("Content-Type", "application/json");

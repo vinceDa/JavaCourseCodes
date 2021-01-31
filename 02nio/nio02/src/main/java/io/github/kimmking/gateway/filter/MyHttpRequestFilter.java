@@ -17,13 +17,13 @@ public class MyHttpRequestFilter implements HttpRequestFilter{
         if (contentByte == null) {
             return;
         }
-        String content = contentByte.toString(CharsetUtil.UTF_8);
+        /*String content = contentByte.toString(CharsetUtil.UTF_8);
         if ("".equals(content)) {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 }

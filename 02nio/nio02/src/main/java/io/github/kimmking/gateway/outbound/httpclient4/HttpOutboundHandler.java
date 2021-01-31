@@ -1,12 +1,12 @@
 package io.github.kimmking.gateway.outbound.httpclient4;
 
 
-import io.github.kimmking.gateway.filter.HeaderHttpResponseFilter;
 import io.github.kimmking.gateway.filter.HttpRequestFilter;
 import io.github.kimmking.gateway.filter.HttpResponseFilter;
 import io.github.kimmking.gateway.filter.MyHttpResponseFilter;
-import io.github.kimmking.gateway.router.HttpEndpointRouter;
-import io.github.kimmking.gateway.router.RandomHttpEndpointRouter;
+import io.github.kimmking.gateway.router.HttpRoundRobinRouter;
+import io.github.kimmking.gateway.router.MyRandomHttpEndpointRouter;
+import io.github.kimmking.gateway.router.Node;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,10 +23,9 @@ import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.*;
-import java.util.logging.Filter;
 import java.util.stream.Collectors;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
@@ -41,8 +40,8 @@ public class HttpOutboundHandler {
 
     // HttpResponseFilter filter = new HeaderHttpResponseFilter();
     HttpResponseFilter filter = new MyHttpResponseFilter();
-    HttpEndpointRouter router = new RandomHttpEndpointRouter();
-
+    // HttpEndpointRouter router = new RandomHttpEndpointRouter();
+    HttpRoundRobinRouter router = new MyRandomHttpEndpointRouter();
     public HttpOutboundHandler(List<String> backends) {
 
         this.backendUrls = backends.stream().map(this::formatUrl).collect(Collectors.toList());
@@ -75,7 +74,9 @@ public class HttpOutboundHandler {
     }
     
     public void handle(final FullHttpRequest fullRequest, final ChannelHandlerContext ctx, HttpRequestFilter filter) {
+
         String backendUrl = router.route(this.backendUrls);
+        // String backendUrl = router.route(this.backendUrls);
         final String url = backendUrl + fullRequest.uri();
         filter.filter(fullRequest, ctx);
         proxyService.submit(()->fetchGet(fullRequest, ctx, url));

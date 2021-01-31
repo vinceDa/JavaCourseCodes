@@ -35,5 +35,4 @@ public class MyHttpClient {
         }
         return null;
     }
-
 }
