@@ -84,15 +84,41 @@ public class Homework03 {
         System.out.println("使用时间："+ (System.currentTimeMillis()-start) + " ms");
     }
 
+    /**
+     *  使用CompletableFuture.supplyAsync
+     */
+    @Test
+    public void example06() throws Exception {
+        long start=System.currentTimeMillis();
+        //创建分治任务线程池
+        ForkJoinPool fjp = new ForkJoinPool(4);
+        //创建分治任务
+        Fibonacci fib = new Fibonacci(36);
+        //启动分治任务
+        Integer result = fjp.invoke(fib);
+        //输出结果
+        System.out.println("异步计算结果为：" + result);
+        System.out.println("使用时间："+ (System.currentTimeMillis()-start) + " ms");
+    }
+
+    static class Fibonacci extends RecursiveTask<Integer>{
+        final int n;
+        Fibonacci(int n){this.n = n;}
+        protected Integer compute(){
+            if (n <= 1)
+                return 1;
+            Fibonacci f1 = new Fibonacci(n - 1);
+            //创建⼦任务
+            f1.fork();
+            Fibonacci f2 = new Fibonacci(n - 2);
+            //等待⼦任务结果，并合并结果
+            return f2.compute() + f1.join();
+        }
+    }
 
 
 
     private static int sum() {
-        try {
-            Thread.sleep(3000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return fibo(36);
     }
 
