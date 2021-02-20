@@ -62,10 +62,26 @@ public class Homework03 {
     }
 
     /**
-     *  使用CompletableFuture.completedFuture
+     *  使用FutureTask + Callable
      */
     @Test
     public void example04() throws Exception {
+        long start=System.currentTimeMillis();
+        FutureTask<Integer> task = new FutureTask<>(new CallableImpl());
+        new Thread(task).start();
+        while (!task.isDone()) {
+
+        }
+        // 确保拿到result 并输出
+        System.out.println("异步计算结果为：" + task.get());
+        System.out.println("使用时间："+ (System.currentTimeMillis()-start) + " ms");
+    }
+
+    /**
+     *  使用CompletableFuture.completedFuture
+     */
+    @Test
+    public void example05() throws Exception {
         long start=System.currentTimeMillis();
         // 确保拿到result 并输出
         System.out.println("异步计算结果为：" + CompletableFuture.completedFuture(sum()).get());
@@ -76,7 +92,7 @@ public class Homework03 {
      *  使用CompletableFuture.supplyAsync
      */
     @Test
-    public void example05() throws Exception {
+    public void example06() throws Exception {
         long start=System.currentTimeMillis();
         CompletableFuture<Integer> future = CompletableFuture.supplyAsync(Homework03::sum);
         // 确保拿到result 并输出
@@ -88,7 +104,7 @@ public class Homework03 {
      *  使用CompletableFuture.supplyAsync
      */
     @Test
-    public void example06() throws Exception {
+    public void example07() throws Exception {
         long start=System.currentTimeMillis();
         //创建分治任务线程池
         ForkJoinPool fjp = new ForkJoinPool(4);
